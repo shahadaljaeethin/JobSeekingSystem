@@ -1,5 +1,6 @@
 package com.example.JSS.Service;
 
+import com.example.JSS.Model.JobApplication;
 import com.example.JSS.Model.User;
 import com.example.JSS.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final JobApplicationService jobApplicationService;
+
 //CRUDs))===================================================================
 
     public void addUser(User user){
@@ -44,6 +47,10 @@ public class UserService {
 
         User user = userRepository.getById(id);
         if(user==null) return false;
+        //remove all applications of this user
+        List<JobApplication> applications = jobApplicationService.getAll();
+        for(JobApplication job:applications)if(job.getUserId()==user.getId())jobApplicationService.withdrawJob(job.getId(),user.getId());
+
 
         userRepository.delete(user);
         return true;
